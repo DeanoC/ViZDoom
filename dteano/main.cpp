@@ -1,8 +1,8 @@
+//
+// Created by deano on 26/04/16.
+//
+
 #include "ViZDoom.h"
-#include <iostream>
-#include <vector>
-#include <cstdlib>
-#include <ctime>
 
 using namespace vizdoom;
 
@@ -82,7 +82,7 @@ int main() {
     int action2[] = {0, 0, 1};
     actions[2] = std::vector<int>(action2, action2 + sizeof(action2) / sizeof(int));
 
-    std::srand(time(0));
+    std::srand((unsigned int) time(0));
 
     // Run this many episodes
     int episodes = 10;
@@ -124,4 +124,3 @@ int main() {
     delete game;
     return 0;
 }
-        

@@ -1,11 +1,11 @@
-cmake_minimum_required( VERSION 2.4 )
-project(ViZDoomC++Examples)
+#cmake_minimum_required( VERSION 2.4 )
+#project(ViZDoomC++Examples)
 
-if(COMMAND cmake_policy)
-    cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
+#if(COMMAND cmake_policy)
+#    cmake_policy(SET CMP0003 NEW)
+#endif(COMMAND cmake_policy)
 
-add_library(vizdoom SHARED IMPORTED GLOBAL)
+#add_library(vizdoom SHARED IMPORTED GLOBAL)
 if (WIN32)
     set_property(TARGET vizdoom PROPERTY IMPORTED_LOCATION ../../bin/vizdoom.dll)
 endif()
@@ -24,7 +24,7 @@ include_directories( ${VIZDOOM_INCLUDE_DIR} ${Boost_INCLUDE_DIR} )
 
 set( VIZDOOM_EXAMPLES_OUTPUT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../bin/examples )
 
-set( VIZDOOM_LIBS vizdoom
+set(VIZDOOM_LIBS vizdoomstatic
     ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT})
 

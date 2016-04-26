@@ -242,8 +242,10 @@ endif()
 #	endif()
 #endif()
 
-if(UNIX)
-    add_custom_target( freedoom2 ALL
-        COMMAND ./download_freedoom.sh
-    )
-endif()
+#if(UNIX)
+#    add_custom_target( freedoom2 ALL
+#        COMMAND ./download_freedoom.sh
+#    )
+#endif()
+
+add_subdirectory("dteano")
