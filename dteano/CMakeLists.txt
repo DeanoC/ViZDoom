@@ -4,8 +4,9 @@
 #if(COMMAND cmake_policy)
 #    cmake_policy(SET CMP0003 NEW)
 #endif(COMMAND cmake_policy)
-
+SET(USE_CUDNN)
 include(cuda.cmake)
+
 #add_library(vizdoom SHARED IMPORTED GLOBAL)
 if (WIN32)
     set_property(TARGET vizdoom PROPERTY IMPORTED_LOCATION ../../bin/vizdoom.dll)
@@ -33,12 +34,7 @@ if (UNIX AND NOT APPLE)
     set(VIZDOOM_LIBS ${VIZDOOM_LIBS} rt)
 endif ()
 
-add_executable(dteano main.cpp)
-target_link_libraries(dteano ${VIZDOOM_LIBS})
+message(HAVE_CUDNN)
 
-#set_target_properties( dteano
-#        PROPERTIES
-#        RUNTIME_OUTPUT_DIRECTORY ${VIZDOOM_EXAMPLES_OUTPUT_DIR}
-#        RUNTIME_OUTPUT_DIRECTORY_DEBUG ${VIZDOOM_EXAMPLES_OUTPUT_DIR}
-#        RUNTIME_OUTPUT_DIRECTORY_RELEASE ${VIZDOOM_EXAMPLES_OUTPUT_DIR}
-#        )
+cuda_add_executable(dteano main.cpp cudainit.cu cudainit.h)
+target_link_libraries(dteano ${VIZDOOM_LIBS} ${DTEANO_LINKER_LIBS})

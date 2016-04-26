@@ -3,13 +3,15 @@
 //
 
 #include "ViZDoom.h"
+#include "cudainit.h"
 
 using namespace vizdoom;
 
 int main() {
 
-    std::cout << "\n\nBASIC EXAMPLE\n\n";
+    std::cout << "\n\ndteano cudaized doom AI player\n\n";
 
+    cudaInit();
 
     // Create DoomGame instance. It will run the game and communicate with you.
     DoomGame *game = new DoomGame();

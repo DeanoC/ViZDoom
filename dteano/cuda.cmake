@@ -62,17 +62,24 @@ endfunction()
 ###  Non macro section
 ################################################################################################
 
-find_package(CUDA 5.5 QUIET)
+find_package(CUDA 7.5 QUIET)
 
 if (NOT CUDA_FOUND)
+    message(STATUS "CUDA not found :(")
     return()
 endif ()
+
+SET(CUDA_PROPAGATE_HOST_FLAGS OFF)
 
 set(HAVE_CUDA TRUE)
 message(STATUS "CUDA detected: " ${CUDA_VERSION})
 include_directories(SYSTEM ${CUDA_INCLUDE_DIRS})
 list(APPEND DTEANO_LINKER_LIBS ${CUDA_CUDART_LIBRARY}
         ${CUDA_curand_LIBRARY} ${CUDA_CUBLAS_LIBRARIES})
+
+add_definitions(-D__STRICT_ANSI__)
+add_definitions(-D_MWAITXINTRIN_H_INCLUDED)
+add_definitions(-D_FORCE_INLINES)
 
 # cudnn detection
 if (USE_CUDNN)
@@ -85,9 +92,7 @@ if (USE_CUDNN)
 endif ()
 
 # setting nvcc arch flags
-#caffe_select_nvcc_arch_flags(NVCC_FLAGS_EXTRA)
-list(APPEND CUDA_NVCC_FLAGS ${NVCC_FLAGS_EXTRA})
-message(STATUS "Added CUDA NVCC flags for: ${NVCC_FLAGS_EXTRA_readable}")
+list(APPEND CUDA_NVCC_FLAGS "-arch=sm_30;-std=c++11;-O2;-DVERBOSE;")
 
 # setting default testing device
 if (NOT CUDA_TEST_DEVICE)
