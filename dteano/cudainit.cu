@@ -50,7 +50,9 @@
     }                                                                  \
 } while(0)
 
-extern "C" void cudaInit() {
+int cudaInit() {
     int num_gpus;
     checkCudaErrors(cudaGetDeviceCount(&num_gpus));
+
+    return num_gpus;
 }

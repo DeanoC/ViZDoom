@@ -11,7 +11,14 @@ int main() {
 
     std::cout << "\n\ndteano cudaized doom AI player\n\n";
 
-    cudaInit();
+    auto numCudaGPUs = cudaInit();
+
+    if (numCudaGPUs == 0) {
+        std::cout << "We require a cuda capable platform\n\n";
+        return 1;
+    } else {
+        std::cout << "Found " << numCudaGPUs << " Cuda capable GPUs\n\n";
+    }
 
     // Create DoomGame instance. It will run the game and communicate with you.
     DoomGame *game = new DoomGame();

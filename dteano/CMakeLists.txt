@@ -1,13 +1,9 @@
-#cmake_minimum_required( VERSION 2.4 )
-#project(ViZDoomC++Examples)
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
 
-#if(COMMAND cmake_policy)
-#    cmake_policy(SET CMP0003 NEW)
-#endif(COMMAND cmake_policy)
 SET(USE_CUDNN)
+
 include(cuda.cmake)
 
-#add_library(vizdoom SHARED IMPORTED GLOBAL)
 if (WIN32)
     set_property(TARGET vizdoom PROPERTY IMPORTED_LOCATION ../../bin/vizdoom.dll)
 endif ()
