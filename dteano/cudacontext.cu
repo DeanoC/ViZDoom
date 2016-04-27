@@ -3,13 +3,16 @@
 //
 
 #include <device_launch_parameters.h>
+#include <cassert>
 #include "cudainit.h"
 #include "cudacontext.h"
 
 bool gPrintCudaDeviceProperties = false;
 
 CudaContext::CudaContext( int _gpuid ) :
-        gpuId(_gpuid) {
+        gpuId(_gpuid),
+        maxWorkspaceRAM(0),
+        curWorkspaceOffset(0) {
     cudaDeviceProp deviceProp;
     cudaGetDeviceProperties(&deviceProp, _gpuid);
     std::cout << "Device " << _gpuid << " (" << deviceProp.name << ")" <<
@@ -108,6 +111,32 @@ CudaContext::~CudaContext() {
     checkCudaErrors(cublasDestroy(cublasHandle));
     checkCUDNN(cudnnDestroy(cudnnHandle));
 }
+
+void CudaContext::reserveWorkspace( const size_t size ) {
+    if( size > maxWorkspaceRAM ) {
+        curWorkspaceOffset = 0;
+        checkCudaErrors(cudaFree(workspaceBase));
+        checkCudaErrors(cudaMalloc((void **) &workspaceBase, size));
+        maxWorkspaceRAM = size;
+    } else {
+        curWorkspaceOffset = 0;
+    }
+}
+
+void *CudaContext::grabWorkspace( const size_t size ) {
+    assert(size + curWorkspaceOffset <= maxWorkspaceRAM);
+    void *ret = ((uint8_t *) workspaceBase) + curWorkspaceOffset;
+    curWorkspaceOffset = curWorkspaceOffset + size;
+    return ret;
+}
+
+void CudaContext::releaseWorkspace( void *const ptr, const size_t size ) {
+    assert(ptr == ((uint8_t *) workspaceBase) - curWorkspaceOffset);
+    workspaceBase = (void *) (((uint8_t *) workspaceBase) + curWorkspaceOffset);
+}
+
+
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 // GPU Kernels

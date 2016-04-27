@@ -1,10 +1,12 @@
 //
 // Created by deano on 27/04/16.
 //
-
+#pragma once
 #ifndef VIZDOOM_BIASEDFULLYCONNECTEDNNLAYER_H
 #define VIZDOOM_BIASEDFULLYCONNECTEDNNLAYER_H
 
+#include <vector>
+#include "cudacontext.h"
 
 class BiasedFullyConnectedNNLayer {
 public:
@@ -17,8 +19,8 @@ protected:
     const int outputSize;
     int batchSize;
 
-    std::vector <half_float> weights;
-    std::vector <half_float> bias;
+    std::vector< half_or_float > weights;
+    std::vector< half_or_float > bias;
 
     cudnnTensorDescriptor_t tensorDescriptor;
     cudnnTensorDescriptor_t biasTensorDescriptor;

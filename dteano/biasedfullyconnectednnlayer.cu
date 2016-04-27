@@ -10,10 +10,11 @@ BiasedFullyConnectedNNLayer::BiasedFullyConnectedNNLayer( int _inputSize, int _o
         batchSize(_batchSize),
         weights(inputSize * outputSize),
         bias(outputSize) {
+
     checkCUDNN(cudnnCreateTensorDescriptor(&tensorDescriptor));
     checkCUDNN(cudnnSetTensor4dDescriptor(tensorDescriptor,
                                           CUDNN_TENSOR_NCHW,
-                                          CUDNN_DATA_FLOAT_OR_HALF,
+                                          CUDNN_DATA_HALF_OR_FLOAT,
                                           batchSize,
                                           outputSize, 1, 1));
 
@@ -21,7 +22,7 @@ BiasedFullyConnectedNNLayer::BiasedFullyConnectedNNLayer( int _inputSize, int _o
     checkCUDNN(cudnnSetTensor4dDescriptor(biasTensorDescriptor,
                                           CUDNN_TENSOR_NCHW,
                                           CUDNN_DATA_HALF_OR_FLOAT,
-                                          1, outputChannels,
+                                          1, outputSize,
                                           1, 1));
 }
 

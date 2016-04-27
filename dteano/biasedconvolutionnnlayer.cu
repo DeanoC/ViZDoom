@@ -2,16 +2,7 @@
 // Created by deano on 27/04/16.
 //
 
-#include <cudnn.h>
-#include "cudainit.h"
-#include "cudacontext.h"
 #include "biasedconvolutionnnlayer.h"
-
-#if USE_HALF_FLOATS
-#define CUDNN_DATA_HALF_OR_FLOAT CUDNN_DATA_HALF
-#else
-#define CUDNN_DATA_HALF_OR_FLOAT CUDNN_DATA_FLOAT
-#endif
 
 BiasedConvolutionNNLayer::BiasedConvolutionNNLayer(
         CudaContext::ptr _context,
@@ -84,6 +75,8 @@ BiasedConvolutionNNLayer::BiasedConvolutionNNLayer(
                                                        forwardConvolutionAlgorithm,
                                                        &forwardWorkspaceSize));
 
+    ctx->reserveWorkspace(forwardWorkspaceSize);
+
     checkCUDNN(cudnnCreateTensorDescriptor(&biasTensorDescriptor));
     checkCUDNN(cudnnSetTensor4dDescriptor(biasTensorDescriptor,
                                           CUDNN_TENSOR_NCHW,
@@ -100,5 +93,27 @@ BiasedConvolutionNNLayer::~BiasedConvolutionNNLayer() {
     checkCUDNN(cudnnDestroyTensorDescriptor(inputTensorDescriptor));
     checkCUDNN(cudnnDestroyTensorDescriptor(outputTensorDescriptor));
     checkCUDNN(cudnnDestroyTensorDescriptor(biasTensorDescriptor));
+
+}
+
+void BiasedConvolutionNNLayer::forwardPropogate( const float alpha, const float beta, const float *x, float *y ) {
+
+    void *const workspace = ctx->grabWorkspace(forwardWorkspaceSize);
+
+    checkCUDNN(cudnnConvolutionForward(ctx->getCudnnHandle(),
+                                       &alpha,
+                                       inputTensorDescriptor,
+                                       x,
+                                       filterDescriptor,
+                                       weights.data(),
+                                       forwardConvolutionDescriptor,
+                                       forwardConvolutionAlgorithm,
+                                       workspace,
+                                       forwardWorkspaceSize,
+                                       &beta,
+                                       outputTensorDescriptor,
+                                       y));
+
+    ctx->releaseWorkspace(workspace, forwardWorkspaceSize);
 
 }
