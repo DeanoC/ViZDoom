@@ -41,6 +41,8 @@
 
 int cudaInit();
 
+void cudaShutdown();
+
 int cudaGetContextCount();
 
 std::shared_ptr<class CudaContext> cudaGetContext(int gpuId);

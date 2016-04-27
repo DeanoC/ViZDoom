@@ -34,6 +34,10 @@ int cudaInit() {
     return numGpus;
 }
 
+void cudaShutdown() {
+    cudaContexts.clear();
+}
+
 std::shared_ptr<class CudaContext> cudaGetContext(int gpuId) {
     assert(gpuId < numGpus);
     return cudaContexts[gpuId];

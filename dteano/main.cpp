@@ -133,6 +133,8 @@ int main() {
     }
     std::cout << "All episodes done\n";
 
+    cudaShutdown();
+
     // It will be done automatically in destructor but after close You can init it again with different settings.
     game->close();
     delete game;
