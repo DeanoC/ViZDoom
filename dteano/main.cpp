@@ -17,7 +17,7 @@ int main() {
 
     auto numCudaGPUs = cudaInit();
 
-    if (numCudaGPUs == 0) {
+    if( numCudaGPUs == 0 ) {
         std::cout << "We require a cuda capable platform\n\n";
         return 1;
     } else {
@@ -86,41 +86,41 @@ int main() {
     // MOVE_LEFT, MOVE_RIGHT, ATTACK
     // more combinations are naturally possible but only 3 are included for transparency when watching.
 
-    std::vector<int> actions[3];
-    int action0[] = {1, 0, 0};
-    actions[0] = std::vector<int>(action0, action0 + sizeof(action0) / sizeof(int));
+    std::vector< int > actions[3];
+    int action0[] = { 1, 0, 0 };
+    actions[ 0 ] = std::vector< int >(action0, action0 + sizeof(action0) / sizeof(int));
 
-    int action1[] = {0, 1, 0};
-    actions[1] = std::vector<int>(action1, action1 + sizeof(action1) / sizeof(int));
+    int action1[] = { 0, 1, 0 };
+    actions[ 1 ] = std::vector< int >(action1, action1 + sizeof(action1) / sizeof(int));
 
-    int action2[] = {0, 0, 1};
-    actions[2] = std::vector<int>(action2, action2 + sizeof(action2) / sizeof(int));
+    int action2[] = { 0, 0, 1 };
+    actions[ 2 ] = std::vector< int >(action2, action2 + sizeof(action2) / sizeof(int));
 
     std::srand((unsigned int) time(0));
 
     // Run this many episodes
     int episodes = 10;
 
-    for (int i = 0; i < episodes; ++i) {
+    for( int i = 0; i < episodes; ++i ) {
 
         std::cout << "Episode #" << i + 1 << "\n";
 
         // Starts a new episode. It is not needed right after init() but it doesn't cost much and the loop is nicer.
         game->newEpisode();
 
-        while (!game->isEpisodeFinished()) {
+        while( !game->isEpisodeFinished() ) {
 
             // Get the state
             GameState s = game->getState();
 
             // Make random action and get reward
-            double r = game->makeAction(actions[std::rand() % 3]);
+            double r = game->makeAction(actions[ std::rand() % 3 ]);
 
             // You can also get last reward by using this function
             // double r = game->getLastReward();
 
             std::cout << "State #" << s.number << "\n";
-            std::cout << "Game variables: " << s.gameVariables[0] << "\n";
+            std::cout << "Game variables: " << s.gameVariables[ 0 ] << "\n";
             std::cout << "Action reward: " << r << "\n";
             std::cout << "=====================\n";
 

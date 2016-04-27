@@ -3,32 +3,28 @@
 //
 
 #include "cudainit.h"
-#include <cuda.h>
 
-#include <cstdio>
-#include <cstdlib>
 #include <cmath>
 #include <ctime>
 
 #include <algorithm>
 #include <iomanip>
 #include <map>
-#include <vector>
 
 #include <cuda_runtime.h>
 #include <cassert>
 #include "cudacontext.h"
 
 namespace {
-    std::vector<std::shared_ptr<class CudaContext>> cudaContexts;
+    std::vector< std::shared_ptr< class CudaContext>> cudaContexts;
     int numGpus = -1;
 }
 
 int cudaInit() {
     checkCudaErrors(cudaGetDeviceCount(&numGpus));
 
-    for (int i = 0; i < numGpus; ++i) {
-        cudaContexts.emplace_back(std::make_shared<CudaContext>(i));
+    for( int i = 0; i < numGpus; ++i ) {
+        cudaContexts.emplace_back(std::make_shared< CudaContext >(i));
     }
 
     return numGpus;
@@ -38,9 +34,9 @@ void cudaShutdown() {
     cudaContexts.clear();
 }
 
-std::shared_ptr<class CudaContext> cudaGetContext(int gpuId) {
+std::shared_ptr< class CudaContext > cudaGetContext( int gpuId ) {
     assert(gpuId < numGpus);
-    return cudaContexts[gpuId];
+    return cudaContexts[ gpuId ];
 }
 
 int cudaGetContextCount() {

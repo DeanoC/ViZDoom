@@ -8,7 +8,7 @@
 
 bool gPrintCudaDeviceProperties = false;
 
-CudaContext::CudaContext(int _gpuid) :
+CudaContext::CudaContext( int _gpuid ) :
         gpuId(_gpuid) {
     cudaDeviceProp deviceProp;
     cudaGetDeviceProperties(&deviceProp, _gpuid);
@@ -16,10 +16,10 @@ CudaContext::CudaContext(int _gpuid) :
     " has compute capability " << deviceProp.major << "." << deviceProp.minor <<
     "\n";
 
-    if (gPrintCudaDeviceProperties) {
-#define CUDA_PRINT_PROPERTY(PROP, COMMENT) std::cout << #PROP << ": " << deviceProp.PROP << " ( " COMMENT" )\n"
+    if( gPrintCudaDeviceProperties ) {
+#define CUDA_PRINT_PROPERTY( PROP, COMMENT ) std::cout << #PROP << ": " << deviceProp.PROP << " ( " COMMENT" )\n"
 
-#define CUDA_PRINT_PROPERTY_ARRAY(PROP, N, COMMENT) { std::cout << #PROP"[" << N << "]: <";                      \
+#define CUDA_PRINT_PROPERTY_ARRAY( PROP, N, COMMENT ) { std::cout << #PROP"[" << N << "]: <";                      \
                                                       for (int i = 0; i < (N); ++i) {                            \
                                                         std::cout << deviceProp.PROP[i];                         \
                                                         std::cout << (( i < (N)-1 ) ? "," : "> ( " COMMENT" )\n");  \
@@ -118,12 +118,13 @@ CudaContext::~CudaContext() {
  * @param vec The array to fill.
  * @param size The number of elements in the array.
  */
-__global__ void FillOnes(float *vec, int size) {
+__global__ void FillOnes( float *vec, int size ) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    if (idx >= size)
+    if( idx >= size ) {
         return;
+    }
 
-    vec[idx] = 1.0f;
+    vec[ idx ] = 1.0f;
 }
 
 /**
@@ -135,13 +136,14 @@ __global__ void FillOnes(float *vec, int size) {
  * @param batch_size The size of the trained batch.
  * @param diff The resulting gradient.
  */
-__global__ void SoftmaxLossBackprop(const float *label, int num_labels, int batch_size, float *diff) {
+__global__ void SoftmaxLossBackprop( const float *label, int num_labels, int batch_size, float *diff ) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
-    if (idx >= batch_size)
+    if( idx >= batch_size ) {
         return;
+    }
 
-    const int label_value = static_cast<int>(label[idx]);
+    const int label_value = static_cast<int>(label[ idx ]);
 
     // For each item in the batch, decrease the result of the label's value by 1
-    diff[idx * num_labels + label_value] -= 1.0f;
+    diff[ idx * num_labels + label_value ] -= 1.0f;
 }
