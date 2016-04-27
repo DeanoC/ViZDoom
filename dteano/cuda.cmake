@@ -45,7 +45,7 @@ function(detect_cuDNN)
             set(CUDNN_VERSION "${CUDNN_VERSION_MAJOR}.${CUDNN_VERSION_MINOR}.${CUDNN_VERSION_PATCH}")
         endif ()
 
-        message(STATUS "Found cuDNN: ver. ${CUDNN_VERSION} found (include: ${CUDNN_INCLUDE}, library: ${CUDNN_LIBRARY})")
+        message("Found cuDNN: ver. ${CUDNN_VERSION} found (include: ${CUDNN_INCLUDE}, library: ${CUDNN_LIBRARY})")
 
         string(COMPARE LESS "${CUDNN_VERSION_MAJOR}" 3 cuDNNVersionIncompatible)
         if (cuDNNVersionIncompatible)
@@ -82,13 +82,11 @@ add_definitions(-D_MWAITXINTRIN_H_INCLUDED)
 add_definitions(-D_FORCE_INLINES)
 
 # cudnn detection
-if (USE_CUDNN)
-    detect_cuDNN()
-    if (HAVE_CUDNN)
-        add_definitions(-DUSE_CUDNN)
-        include_directories(SYSTEM ${CUDNN_INCLUDE})
-        list(APPEND DTEANO_LINKER_LIBS ${CUDNN_LIBRARY})
-    endif ()
+detect_cuDNN()
+if (HAVE_CUDNN)
+    add_definitions(-DUSE_CUDNN)
+    include_directories(SYSTEM ${CUDNN_INCLUDE})
+    list(APPEND DTEANO_LINKER_LIBS ${CUDNN_LIBRARY})
 endif ()
 
 # setting nvcc arch flags

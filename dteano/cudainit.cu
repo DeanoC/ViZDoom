@@ -12,47 +12,33 @@
 
 #include <algorithm>
 #include <iomanip>
-#include <iostream>
 #include <map>
-#include <memory>
-#include <sstream>
 #include <vector>
 
 #include <cuda_runtime.h>
+#include <cassert>
+#include "cudacontext.h"
 
-//////////////////////////////////////////////////////////////////////////////
-// Error handling
-// Adapted from the CUDNN classification code
-// sample: https://developer.nvidia.com/cuDNN
-
-#define FatalError(s) do {                                             \
-    std::stringstream _where, _message;                                \
-    _where << __FILE__ << ':' << __LINE__;                             \
-    _message << std::string(s) + "\n" << __FILE__ << ':' << __LINE__;  \
-    std::cerr << _message.str() << "\nAborting...\n";                  \
-    cudaDeviceReset();                                                 \
-    exit(1);                                                           \
-} while(0)
-
-#define checkCUDNN(status) do {                                        \
-    std::stringstream _error;                                          \
-    if (status != CUDNN_STATUS_SUCCESS) {                              \
-      _error << "CUDNN failure: " << cudnnGetErrorString(status);      \
-      FatalError(_error.str());                                        \
-    }                                                                  \
-} while(0)
-
-#define checkCudaErrors(status) do {                                   \
-    std::stringstream _error;                                          \
-    if (status != 0) {                                                 \
-      _error << "Cuda failure: " << status;                            \
-      FatalError(_error.str());                                        \
-    }                                                                  \
-} while(0)
+namespace {
+    std::vector<std::shared_ptr<class CudaContext>> cudaContexts;
+    int numGpus = -1;
+}
 
 int cudaInit() {
-    int num_gpus;
-    checkCudaErrors(cudaGetDeviceCount(&num_gpus));
+    checkCudaErrors(cudaGetDeviceCount(&numGpus));
 
-    return num_gpus;
+    for (int i = 0; i < numGpus; ++i) {
+        cudaContexts.emplace_back(std::make_shared<CudaContext>(i));
+    }
+
+    return numGpus;
+}
+
+std::shared_ptr<class CudaContext> cudaGetContext(int gpuId) {
+    assert(gpuId < numGpus);
+    return cudaContexts[gpuId];
+}
+
+int cudaGetContextCount() {
+    return numGpus;
 }

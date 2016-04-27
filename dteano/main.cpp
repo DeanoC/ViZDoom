@@ -7,7 +7,11 @@
 
 using namespace vizdoom;
 
+extern bool gPrintCudaDeviceProperties;
+
 int main() {
+
+    gPrintCudaDeviceProperties = true;
 
     std::cout << "\n\ndteano cudaized doom AI player\n\n";
 
@@ -19,6 +23,7 @@ int main() {
     } else {
         std::cout << "Found " << numCudaGPUs << " Cuda capable GPUs\n\n";
     }
+
 
     // Create DoomGame instance. It will run the game and communicate with you.
     DoomGame *game = new DoomGame();

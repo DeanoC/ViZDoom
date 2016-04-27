@@ -1,7 +1,5 @@
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11")
 
-SET(USE_CUDNN)
-
 include(cuda.cmake)
 
 if (WIN32)
@@ -30,7 +28,7 @@ if (UNIX AND NOT APPLE)
     set(VIZDOOM_LIBS ${VIZDOOM_LIBS} rt)
 endif ()
 
-message(HAVE_CUDNN)
+file(GLOB SRCS *.cu *.h *.c *.cpp)
 
-cuda_add_executable(dteano main.cpp cudainit.cu cudainit.h)
+cuda_add_executable(dteano ${SRCS})
 target_link_libraries(dteano ${VIZDOOM_LIBS} ${DTEANO_LINKER_LIBS})

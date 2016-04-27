@@ -23,10 +23,6 @@
 #include "ViZDoomController.h"
 #include "ViZDoomExceptions.h"
 
-#include <cstdlib>
-#include <cstdio>
-
-#include <boost/bind.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include "boost/process.hpp"
