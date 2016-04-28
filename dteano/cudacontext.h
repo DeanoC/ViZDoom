@@ -5,51 +5,7 @@
 #ifndef VIZDOOM_CUDACONTEXT_H
 #define VIZDOOM_CUDACONTEXT_H
 
-#include <cuda.h>
-#include <cuda_fp16.h>
-#include <cublas_v2.h>
-#include <cudnn.h>
-#include <memory>
-#include <sstream>
-#include <cstdint>
-#include <iostream>
-
-//////////////////////////////////////////////////////////////////////////////
-// Error handling
-// Adapted from the CUDNN classification code
-// sample: https://developer.nvidia.com/cuDNN
-
-#define FatalError( s ) do {                                           \
-    std::stringstream _where, _message;                                \
-    _where << __FILE__ << ':' << __LINE__;                             \
-    _message << std::string(s) + "\n" << __FILE__ << ':' << __LINE__;  \
-    std::cerr << _message.str() << "\nAborting...\n";                  \
-    cudaDeviceReset();                                                 \
-} while(0)
-
-#define checkCUDNN( status ) do {                                        \
-    std::stringstream _error;                                          \
-    if (status != CUDNN_STATUS_SUCCESS) {                              \
-      _error << "CUDNN failure: " << cudnnGetErrorString(status);      \
-      FatalError(_error.str());                                        \
-    }                                                                  \
-} while(0)
-
-#define checkCudaErrors( status ) do {                                   \
-    std::stringstream _error;                                          \
-    if (status != 0) {                                                 \
-      _error << "Cuda failure: " << status;                            \
-      FatalError(_error.str());                                        \
-    }                                                                  \
-} while(0)
-
-#if defined(USE_HALF_FLOATS)
-#define CUDNN_DATA_HALF_OR_FLOAT CUDNN_DATA_HALF
-typedef half half_or_float;
-#else
-#define CUDNN_DATA_HALF_OR_FLOAT CUDNN_DATA_FLOAT
-typedef half half_or_float;
-#endif
+#include "common.h"
 
 class CudaContext {
 public:

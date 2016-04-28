@@ -29,6 +29,18 @@ if (UNIX AND NOT APPLE)
 endif ()
 
 file(GLOB SRCS *.cu *.h *.c *.cpp)
+file(GLOB TEST_ONLY_SRCS *_test.cu *_test.h *_test.cc *_test.cpp)
+file(GLOB MAIN_ONLY_SRCS main.cpp)
 
-cuda_add_executable(dteano ${SRCS})
+set(MAIN_SRCS ${SRCS})
+list(REMOVE_ITEM MAIN_SRCS ${TEST_ONLY_SRCS})
+
+set(TEST_SRCS ${SRCS})
+list(REMOVE_ITEM TEST_SRCS ${MAIN_ONLY_SRCS})
+
+cuda_add_executable(dteano ${MAIN_SRCS})
 target_link_libraries(dteano ${VIZDOOM_LIBS} ${DTEANO_LINKER_LIBS})
+
+cuda_add_executable(dteano_tests ${TEST_SRCS})
+target_link_libraries(dteano_tests ${VIZDOOM_LIBS} ${DTEANO_LINKER_LIBS} gtest gtest_main)
+

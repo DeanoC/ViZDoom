@@ -4,6 +4,7 @@
 
 #include "ViZDoom.h"
 #include "cudainit.h"
+#include "neuralnetwork.h"
 
 using namespace vizdoom;
 
@@ -23,6 +24,9 @@ int main() {
     } else {
         std::cout << "Found " << numCudaGPUs << " Cuda capable GPUs\n\n";
     }
+
+    // 2 layer neural network
+    NeuralNetwork nn(2);
 
 
     // Create DoomGame instance. It will run the game and communicate with you.

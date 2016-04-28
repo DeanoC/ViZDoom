@@ -117,3 +117,13 @@ void BiasedConvolutionNNLayer::forwardPropogate( const float alpha, const float 
     ctx->releaseWorkspace(workspace, forwardWorkspaceSize);
 
 }
+
+void BiasedConvolutionNNLayer::backPropogate( const float alpha, const float beta, const float *dy, float *db ) {
+    checkCudaErrors(cudnnConvolutionBackwardBias(ctx->getCudnnHandle(),
+                                                 &alpha,
+                                                 outputTensorDescriptor,
+                                                 dy,
+                                                 &beta,
+                                                 biasTensorDescriptor,
+                                                 db));
+}

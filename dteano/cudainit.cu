@@ -32,6 +32,7 @@ int cudaInit() {
 
 void cudaShutdown() {
     cudaContexts.clear();
+    numGpus = 0;
 }
 
 std::shared_ptr< class CudaContext > cudaGetContext( int gpuId ) {

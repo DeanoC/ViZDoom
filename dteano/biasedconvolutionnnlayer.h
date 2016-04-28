@@ -7,8 +7,9 @@
 
 #include <vector>
 #include "cudacontext.h"
+#include "neurallayer.h"
 
-class BiasedConvolutionNNLayer {
+class BiasedConvolutionNNLayer : public NeuralLayer {
 
     BiasedConvolutionNNLayer( CudaContext::ptr _context,
                               int _inputWidth, int _inputHeight, int _inputChannels,
@@ -16,7 +17,9 @@ class BiasedConvolutionNNLayer {
 
     ~BiasedConvolutionNNLayer();
 
-    void forwardPropogate( const float alpha, const float beta, const float *x, float *y );
+    void forwardPropogate( const float alpha, const float beta, const float *x, float *y ) override;
+
+    void backPropogate( const float alpha, const float beta, const float *x, float *y ) override;
 
 protected:
 
