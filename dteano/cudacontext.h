@@ -9,7 +9,7 @@
 
 class CudaContext {
 public:
-    using ptr = std::shared_ptr< CudaContext >;
+    typedef std::shared_ptr< CudaContext > ptr;
 
     CudaContext( int _gpuid );
 

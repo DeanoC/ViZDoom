@@ -14,6 +14,8 @@
  */
 class NeuralNetwork {
 public:
+    typedef std::shared_ptr< NeuralNetwork > ptr;
+
     NeuralNetwork( const TinyIndex _depth ) { layers.resize(_depth); }
 
     using LayerContainer = std::vector< NeuralLayer::ptr >;
@@ -26,11 +28,11 @@ public:
 
     LayerContainer::iterator end() { return layers.end(); }
 
-    const NeuralLayer::ptr operator[]( const TinyIndex _layer ) {
+    const NeuralLayer::ptr &operator[]( const TinyIndex _layer ) const {
         return layers.at(_layer);
     }
 
-    NeuralLayer::ptr operator[]( const TinyIndex _layer ) const {
+    NeuralLayer::ptr &operator[]( const TinyIndex _layer ) {
         return layers.at(_layer);
     }
 
