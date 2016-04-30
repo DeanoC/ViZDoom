@@ -18,7 +18,7 @@ BiasedConvolutionNNLayer::BiasedConvolutionNNLayer(
         outputWidth((inputWidth - kernelSize) + 1),
         outputHeight((inputHeight - kernelSize) + 1),
         weights(inputChannels * kernelSize * kernelSize * outputChannels),
-        bias(outputChannels) {
+        biasWeights(outputChannels) {
 
     checkCUDNN(cudnnCreateTensorDescriptor(&inputTensorDescriptor));
     checkCUDNN(cudnnSetTensor4dDescriptor(inputTensorDescriptor,
@@ -75,7 +75,7 @@ BiasedConvolutionNNLayer::BiasedConvolutionNNLayer(
                                                        forwardConvolutionAlgorithm,
                                                        &forwardWorkspaceSize));
 
-    ctx->reserveWorkspace(forwardWorkspaceSize);
+    ctx->reserveWorkspace(ctx->getWorkspaceSize() + forwardWorkspaceSize);
 
     checkCUDNN(cudnnCreateTensorDescriptor(&biasTensorDescriptor));
     checkCUDNN(cudnnSetTensor4dDescriptor(biasTensorDescriptor,
@@ -96,7 +96,20 @@ BiasedConvolutionNNLayer::~BiasedConvolutionNNLayer() {
 
 }
 
-void BiasedConvolutionNNLayer::forwardPropogate( const float alpha, const float beta, const float *x, float *y ) {
+void BiasedConvolutionNNLayer::setWeights( half_or_float const *const in ) {
+    for( int i = 0; i < weights.size(); ++i ) {
+        weights[ i ] = in[ i ];
+    }
+}
+
+void BiasedConvolutionNNLayer::setBiasWeights( half_or_float const *const in ) {
+    for( int i = 0; i < outputChannels; ++i ) {
+        biasWeights[ i ] = in[ i ];
+    }
+}
+
+void BiasedConvolutionNNLayer::forwardPropogate( const half_or_float alpha, const half_or_float beta,
+                                                 half_or_float const *const x, half_or_float *y ) {
 
     void *const workspace = ctx->grabWorkspace(forwardWorkspaceSize);
 
@@ -118,7 +131,8 @@ void BiasedConvolutionNNLayer::forwardPropogate( const float alpha, const float 
 
 }
 
-void BiasedConvolutionNNLayer::backPropogate( const float alpha, const float beta, const float *dy, float *db ) {
+void BiasedConvolutionNNLayer::backPropogate( const half_or_float alpha, const half_or_float beta,
+                                              half_or_float const *const dy, half_or_float *db ) {
     checkCudaErrors(cudnnConvolutionBackwardBias(ctx->getCudnnHandle(),
                                                  &alpha,
                                                  outputTensorDescriptor,

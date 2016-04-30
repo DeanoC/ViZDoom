@@ -113,14 +113,19 @@ CudaContext::~CudaContext() {
 }
 
 void CudaContext::reserveWorkspace( const size_t size ) {
-    if( size > maxWorkspaceRAM ) {
-        curWorkspaceOffset = 0;
-        checkCudaErrors(cudaFree(workspaceBase));
-        checkCudaErrors(cudaMalloc((void **) &workspaceBase, size));
-        maxWorkspaceRAM = size;
-    } else {
-        curWorkspaceOffset = 0;
-    }
+    curWorkspaceOffset = 0;
+    maxWorkspaceRAM += size;
+    checkCudaErrors(cudaFree(workspaceBase));
+    checkCudaErrors(cudaMalloc((void **) &workspaceBase, size));
+}
+
+void CudaContext::unreserveWorkspace( const size_t size ) {
+    curWorkspaceOffset = 0;
+    maxWorkspaceRAM -= size;
+
+    checkCudaErrors(cudaFree(workspaceBase));
+    checkCudaErrors(cudaMalloc((void **) &workspaceBase, size));
+
 }
 
 void *CudaContext::grabWorkspace( const size_t size ) {
@@ -131,8 +136,8 @@ void *CudaContext::grabWorkspace( const size_t size ) {
 }
 
 void CudaContext::releaseWorkspace( void *const ptr, const size_t size ) {
-    assert(ptr == ((uint8_t *) workspaceBase) - curWorkspaceOffset);
-    workspaceBase = (void *) (((uint8_t *) workspaceBase) + curWorkspaceOffset);
+    assert(ptr == ((uint8_t *) workspaceBase) + curWorkspaceOffset - size);
+    curWorkspaceOffset = curWorkspaceOffset - size;
 }
 
 

@@ -30,13 +30,18 @@ public:
     // workspace system is a simple linear buffer of device memory for temporary calculation workspace
     void reserveWorkspace( const size_t size );
 
+    void unreserveWorkspace( const size_t size );
+
     void *grabWorkspace( const size_t size );
 
     void releaseWorkspace( void *const ptr, const size_t size );
 
+    size_t getWorkspaceSize() const {
+        return maxWorkspaceRAM;
+    }
+
 protected:
     const int gpuId;
-
     size_t maxWorkspaceRAM;
     size_t curWorkspaceOffset;
     void *workspaceBase;

@@ -10,16 +10,46 @@
 #include "neurallayer.h"
 
 class BiasedConvolutionNNLayer : public NeuralLayer {
-
+public:
     BiasedConvolutionNNLayer( CudaContext::ptr _context,
                               int _inputWidth, int _inputHeight, int _inputChannels,
                               int _outputChannels, int _kernelSize, int _batchSize );
 
     ~BiasedConvolutionNNLayer();
 
-    void forwardPropogate( const float alpha, const float beta, const float *x, float *y ) override;
+    void forwardPropogate( half_or_float const alpha, half_or_float const beta, half_or_float const *const x,
+                           half_or_float *y ) override;
 
-    void backPropogate( const float alpha, const float beta, const float *x, float *y ) override;
+    void backPropogate( half_or_float const alpha, half_or_float const beta, half_or_float const *const x,
+                        half_or_float *y ) override;
+
+    size_t getInputCount() const override { return inputChannels * inputHeight * inputWidth; }
+
+    size_t getWeightCount() const override { return weights.size(); }
+
+    size_t getOutputCount() const override { return outputChannels; }
+
+    void setWeights( half_or_float const *const in ) override;
+
+    bool hasBias() override { return true; }
+
+    void setBiasWeights( half_or_float const *const in ) override;
+
+    int getKernelSize() const { return kernelSize; }
+
+    int getInputChannels() const { return inputChannels; }
+
+    int getInputWidth() const { return inputWidth; }
+
+    int getInputHeight() const { return inputHeight; }
+
+    int getOutputWidth() const { return outputWidth; }
+
+    int getOutputHeight() const { return outputHeight; }
+
+    int getOutputChannels() const { return outputChannels; }
+
+    int getBatchSize() const { return batchSize; }
 
 protected:
 
@@ -33,7 +63,7 @@ protected:
     int batchSize;
 
     std::vector< half_or_float > weights;
-    std::vector< half_or_float > bias;
+    std::vector< half_or_float > biasWeights;
 
     CudaContext::ptr ctx;
     cudnnTensorDescriptor_t inputTensorDescriptor;

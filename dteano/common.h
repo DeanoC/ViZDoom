@@ -48,7 +48,7 @@
 typedef half half_or_float;
 #else
 #define CUDNN_DATA_HALF_OR_FLOAT CUDNN_DATA_FLOAT
-typedef half half_or_float;
+typedef float half_or_float;
 #endif
 
 // sized index type
